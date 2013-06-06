@@ -1,0 +1,50 @@
+#!/usr/bin/expect
+
+# Initiate reboot procedure on the 8th outlet of APC Switched Rack PDU
+# (230 VAC Masterswitch III, AP7921, FW rev. v3.7.3)
+#
+# -- dmitry.semyonov@cogentembedded.com
+
+set timeout 3
+
+set pwr_station apc
+set pwr_login apc
+set pwr_passwd apc
+
+spawn telnet $pwr_station
+expect "User Name :"
+send "$pwr_login\r"
+expect "Password  :"
+send "$pwr_passwd\r"
+
+expect "Control Console"
+send "1\r"
+expect "Device Manager"
+send "2\r"
+expect "Outlet Management"
+send "1\r"
+expect "Outlet 8                 ON"
+send "8\r"
+expect "Control Outlet"
+send "1\r"
+expect "Immediate Reboot"
+send "3\r"
+expect "to cancel"
+send "YES\r"
+expect "to continue"
+send "\r"
+expect ": OFF"
+
+send \033
+expect "Outlet 8"
+send \033
+expect "Outlet Control/Configuration"
+send \033
+expect "Outlet Management"
+send \033
+expect "Device Manager"
+send \033
+expect "Control Console"
+send "4\r"
+
+wait # wait for normal termination of telnet session
